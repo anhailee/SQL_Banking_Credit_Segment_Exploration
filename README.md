@@ -1,6 +1,5 @@
-# SQL_Banking_Credit_Segment_Exploration
+![image](https://github.com/user-attachments/assets/d3792f5a-e576-42eb-8c79-070e21b53add)# SQL_Banking_Credit_Segment_Exploration
 SQL_Banking_Credit_Segment_Exploration
-
 
 ## **1. INTRODUCTION**
 
@@ -726,3 +725,165 @@ However, in the second half of the year, the total collateral value saw a signif
 **+ Collateral Management:** The bank may need to improve its collateral management processes to avoid asset value depreciation and to optimize the use of collateral in mitigating credit risk.
 
 In summary, while the number of collateral assets and their value did increase during certain periods of the year, the significant reductions in the second half require attention to ensure the bank can enhance its collateral value strategy in the future.
+
+Query 3: 
+
+```
+sql
+
+----------------------------
+-- III. TĂNG TRƯỞNG QUA CÁC NĂM 
+-----------------------------
+
+--1. Tính tổng latest_Value cho từng năm
+
+WITH GIATRIHDTD_CTT AS (
+    SELECT 
+        '2021' AS Nam,
+        SUM(latest_Value) AS Tong_Gia_Tri
+    FROM (
+        SELECT DISTINCT
+            COL.col_ID,
+            col.latest_Value
+        FROM COLLATERAL AS COL
+        LEFT JOIN MORTGAGE_AGREEMENT AS MA ON COL.HDTC_id = MA.HDTC_id
+        LEFT JOIN CREDIT_CONTRACT AS CC ON COL.HDTC_id = CC.sogiaodich
+        LEFT JOIN CREDIT_PLAN AS CP ON CC.debid = CP.debid
+        WHERE CP.ngaydauky <= '2021-12-31'
+          AND CP.ngaycuoiky >= '2021-12-31'
+          AND CC.crcontract_end_date > '2021-12-31'
+    ) AS X
+
+    UNION ALL
+
+    SELECT 
+        '2022' AS Nam,
+        SUM(latest_Value) AS Tong_Gia_Tri
+    FROM (
+        SELECT DISTINCT
+            COL.col_ID,
+            col.latest_Value
+        FROM COLLATERAL AS COL
+        LEFT JOIN MORTGAGE_AGREEMENT AS MA ON COL.HDTC_id = MA.HDTC_id
+        LEFT JOIN CREDIT_CONTRACT AS CC ON COL.HDTC_id = CC.sogiaodich
+        LEFT JOIN CREDIT_PLAN AS CP ON CC.debid = CP.debid
+        WHERE CP.ngaydauky <= '2022-12-31'
+          AND CP.ngaycuoiky >= '2022-12-31'
+          AND CC.crcontract_end_date > '2022-12-31'
+    ) AS X
+
+    UNION ALL
+
+    SELECT 
+        '2023' AS Nam,
+        SUM(latest_Value) AS Tong_Gia_Tri
+    FROM (
+        SELECT DISTINCT
+            COL.col_ID,
+            col.latest_Value
+        FROM COLLATERAL AS COL
+        LEFT JOIN MORTGAGE_AGREEMENT AS MA ON COL.HDTC_id = MA.HDTC_id
+        LEFT JOIN CREDIT_CONTRACT AS CC ON COL.HDTC_id = CC.sogiaodich
+        LEFT JOIN CREDIT_PLAN AS CP ON CC.debid = CP.debid
+        WHERE CP.ngaydauky <= '2023-12-31'
+          AND CP.ngaycuoiky >= '2023-12-31'
+          AND CC.crcontract_end_date > '2023-12-31'
+    ) AS X
+)
+
+-- Tính tỷ lệ tăng trưởng so với năm gốc 2021
+
+SELECT
+    Nam,
+    Tong_Gia_Tri,
+    CASE 
+        WHEN Nam = '2021' THEN 100
+        WHEN Nam = '2022' THEN (Tong_Gia_Tri / (SELECT Tong_Gia_Tri FROM GIATRIHDTD_CTT WHERE Nam = '2021')) * 100
+        WHEN Nam = '2023' THEN (Tong_Gia_Tri / (SELECT Tong_Gia_Tri FROM GIATRIHDTD_CTT WHERE Nam = '2022')) * 100
+    END AS TyLe_TangTruong
+FROM GIATRIHDTD_CTT
+
+--2. Tính tổng dư nợ tín dụng cho từng năm
+
+WITH GTTSBD_CTT AS (
+    SELECT 
+        YEAR(ngaydauky) AS Nam,
+        SUM(B.sodudauky) AS Tong_Gia_Tri
+    FROM credit_contract A
+    INNER JOIN CREDIT_PLAN B ON A.debid = B.debid
+    WHERE 
+        (ngaydauky <= '2021-12-31' AND ngaycuoiky >= '2021-12-31' AND crcontract_end_date > '2021-12-31')
+        OR (ngaydauky <= '2022-12-31' AND ngaycuoiky >= '2022-12-31' AND crcontract_end_date > '2022-12-31')
+        OR (ngaydauky <= '2023-12-31' AND ngaycuoiky >= '2023-12-31' AND crcontract_end_date > '2023-12-31')
+    GROUP BY YEAR(ngaydauky)
+)
+
+-- Tính tỷ lệ tăng trưởng so với năm gốc 2021
+
+SELECT
+    Nam,
+    Tong_Gia_Tri,
+    CASE 
+        WHEN Nam = 2021 THEN 100
+        WHEN Nam = 2022 THEN (Tong_Gia_Tri / (SELECT Tong_Gia_Tri FROM GTTSBD_CTT WHERE Nam = 2021)) * 100
+        WHEN Nam = 2023 THEN (Tong_Gia_Tri / (SELECT Tong_Gia_Tri FROM GTTSBD_CTT WHERE Nam = 2022)) * 100
+    END AS TyLe_TangTruong
+FROM GTTSBD_CTT
+
+```
+**RESULT**
+
+![image](https://github.com/user-attachments/assets/5edd8b36-2691-4817-a13d-5af4465cec6a)
+
+**From the table provided, we can extract and analyze the key trends regarding both the outstanding loan contracts (HĐTD) and the collateral (TSBD) over the three years (2021, 2022, and 2023). Below is an analysis based on the data:**
+
+**1. Outstanding Loan Contracts (HĐTD):**
+
++ 2021: The total outstanding loan value was 2,702,834,923,508 VND.
++ 2022: The value decreased slightly to 2,602,895,025,966 VND, showing a 96.30% growth rate compared to 2021.
++ 2023: There was a significant drop in outstanding loans to 1,650,433,320,888 VND, with a growth rate of 63.41% compared to 2022.
+  
+**Analysis:**
+
+The decrease in loan values from 2021 to 2022 was modest, which suggests that the bank maintained a relatively stable loan portfolio during this period.
+
+However, the sharp decline in 2023 indicates a major reduction in outstanding loans. This could reflect several possibilities:
+
++ The bank may have focused on recovering loans and reducing exposure to risk.
++ There could have been a decline in demand for loans or more stringent lending policies.
++ Loan repayments might have accelerated, or there could have been write-offs of bad debt, leading to lower outstanding amounts.
+  
+**2. Total Collateral Value (TSBD):**
+
++ 2021: The total collateral value was 17,989,974,014,144 VND.
++ 2022: The collateral value slightly decreased to 17,763,992,591,577 VND, indicating a 98.74% growth rate compared to 2021.
++ 2023: The collateral value further decreased to 17,583,123,160,056 VND, showing a 98.98% growth rate compared to 2022.
+
+**Analysis:**
+
++ The slight decline in collateral value from 2021 to 2023 suggests a relatively stable collateral base with only minor fluctuations. The decrease is not as sharp as the reduction in outstanding loans, which might indicate that the bank has continued to maintain a healthy collateral structure even as the loan portfolio shrank.
++ The slight decline could also suggest that either some collateral was liquidated or devalued, but the bank was still able to preserve most of its collateral value over time.
+  
+**Key Insights:**
+
+**1. Loan Portfolio Management:**
+
+The significant reduction in outstanding loans in 2023 could point to a more cautious lending approach or successful efforts in loan recovery. This may have been part of a risk management strategy to safeguard against potential losses or external economic factors influencing lending practices.
+
+**2. Collateral Stability:**
+
+Despite the reduction in loans, the collateral value has remained relatively stable, with only minimal reductions over the three-year period. This stability in collateral indicates that the bank has not been overly aggressive in liquidating collateral and has retained a strong asset base.
+
+**3. Growth Trends:**
+
+The reduction in growth rates, particularly in 2023, suggests that the bank has shifted focus from expanding its loan portfolio to consolidating its current assets and possibly focusing on risk mitigation and loan recovery. This strategic shift could be a reaction to changing market conditions or an internal decision to prioritize financial health over growth.
+
+**Recommendations:**
+
+**+ Future Loan Strategy:** The bank might consider revisiting its lending policies to identify areas where it can safely expand its loan portfolio while managing risk effectively.
+
+**+ Collateral Management:** Maintaining the collateral base will continue to be important for mitigating risks related to loan defaults. Ensuring that collateral is properly valued and managed will safeguard the bank’s assets.
+
+**+ Focus on Loan Recovery:** Given the large drop in outstanding loans, the bank could focus on further improving loan recovery and managing non-performing loans (NPLs) to ensure financial stability moving forward.
+
+Overall, while the reduction in outstanding loans is noticeable, the stability of the collateral values suggests that the bank is managing its credit risks effectively.
