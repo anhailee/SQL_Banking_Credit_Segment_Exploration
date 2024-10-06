@@ -9,8 +9,11 @@ This project focuses on compiling and analyzing credit data for VNC Bank in 2023
 ## **2. THE GOAL OF PROJECT**
 
 **+ Compile and analyze credit data:** Collect and process data on credit contracts, customers, outstanding loans, and collateral values across different periods in 2023.
+
 **+ Assess credit fluctuations:** Compare fluctuations in customer numbers and credit values, including increases and decreases, to evaluate the bank's financial health over specific time periods.
+
 **+ Monitor collateral performance:** Review changes in the total collateral value (TSBD) and assess growth compared to the same period in the previous year to predict loan recovery potential and minimize credit risks.
+
 **+ Provide strategic insights:** Offer useful information for management to adjust credit strategies and risk management, optimizing profits while minimizing losses.
 
 => This project plays a crucial role in supporting strategic decision-making and improving the bank's credit management activities for future operations.
@@ -456,7 +459,9 @@ FROM
 **Conclusions and Key Insights:**
 
 **+ Cautious Credit Approach:** The decline in the number of credit contracts and customers suggests that the bank is taking a more cautious approach to lending, focusing on quality over quantity.
+
 **+ Growth in Loan Value:** Despite the reduction in the number of contracts and customers, total disbursed funds and loan management remain efficient. This suggests that the bank has shifted its strategy towards disbursing larger loans, possibly targeting corporate clients or higher-quality loans.
+
 **+ Effective Loan Management:** The significant reduction in outstanding loans indicates that the bank is effectively managing its debts, recovering funds in a timely manner, and reducing credit risks, which provides a solid foundation for future growth.
 
 => In summary, VNC Bank has achieved a balance between minimizing risks and maintaining credit growth by focusing on larger-value loans and managing outstanding debts effectively. However, the bank should also pay attention to attracting new customers to ensure long-term growth.
