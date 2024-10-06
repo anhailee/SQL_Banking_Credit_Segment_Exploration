@@ -28,14 +28,14 @@ WITH SOLIEU AS
 	SELECT *
 	FROM
 	(
-	SELECT	DAUKY.debid								AS 'DAUKY_KHOANNO',
-			DAUKY.sodudauky							AS 'DAUKY_SODU',
-			DAUKY.crcontract_date					AS 'DAUKY_NGAYBATDAU',
-			DAUKY.crcontract_end_date				AS 'DAUKY_NGAYTATTOAN',
-			PHATSINH.debid							AS 'PS_KHOANNO',
-			PHATSINH.crlimit						AS 'PS_SOTIEN',
-			PHATSINH.crcontract_date				AS 'PS_NGAYBATDAU',
-			PHATSINH.crcontract_end_date			AS 'PS_NGAYTATTOAN'
+	SELECT	DAUKY.debid							AS 'DAUKY_KHOANNO',
+		DAUKY.sodudauky							AS 'DAUKY_SODU',
+		DAUKY.crcontract_date						AS 'DAUKY_NGAYBATDAU',
+		DAUKY.crcontract_end_date					AS 'DAUKY_NGAYTATTOAN',
+		PHATSINH.debid							AS 'PS_KHOANNO',
+		PHATSINH.crlimit						AS 'PS_SOTIEN',
+		PHATSINH.crcontract_date					AS 'PS_NGAYBATDAU',
+		PHATSINH.crcontract_end_date					AS 'PS_NGAYTATTOAN'
 	FROM 
 		(
 			select	A.debid, B.sodudauky,A.crcontract_date,A.crcontract_end_date
@@ -54,9 +54,9 @@ WITH SOLIEU AS
 	LEFT JOIN
 	(
 		select		A.DEBID							AS 'THUHOI_KHOANNO', 
-					SUM(gocphaitra)					AS 'THUHOI_TONGTHU',     
-					A.crcontract_date				AS 'THUHOI_NGAYBATDAU',
-					A.crcontract_end_date			AS 'THUHOI_NGAYTATTOAN'
+				SUM(gocphaitra)						AS 'THUHOI_TONGTHU',     
+				A.crcontract_date					AS 'THUHOI_NGAYBATDAU',
+				A.crcontract_end_date					AS 'THUHOI_NGAYTATTOAN'
 		from		credit_contract a 
 					inner join CREDIT_PLAN b on a.debid = b.debid  
 		where		YEAR(dateadd(day,1,ngaycuoiky)) = 2023
@@ -65,9 +65,9 @@ WITH SOLIEU AS
 	LEFT JOIN
 	(
 		select		A.debid							AS 'CUOIKY_KHOANNO', 
-					B.sodudauky						AS 'CUOIKY_SODU',
-					A.crcontract_date				AS 'CUOIKY_NGAYBATDAU',
-					A.crcontract_end_date			AS 'CUOIKY_NGAYTATTOAN'
+				B.sodudauky						AS 'CUOIKY_SODU',
+				A.crcontract_date					AS 'CUOIKY_NGAYBATDAU',
+				A.crcontract_end_date					AS 'CUOIKY_NGAYTATTOAN'
 		from		credit_contract a 
 					inner join CREDIT_PLAN b on a.debid = b.debid 
 		where		ngaydauky <= '2023-12-31' and ngaycuoiky >= '2023-12-31'
@@ -76,9 +76,9 @@ WITH SOLIEU AS
 	LEFT JOIN
 	(
 		select		A.debid							AS 'TATTOAN_KHOANNO', 
-					A.crlimit						AS 'TATTOAN_SOTIEN',
-					A.crcontract_date				AS 'TATTOAN_NGAYBATDAU',
-					A.crcontract_end_date			AS 'TATTOAN_NGAYTATTOAN'
+				A.crlimit						AS 'TATTOAN_SOTIEN',
+				A.crcontract_date					AS 'TATTOAN_NGAYBATDAU',
+				A.crcontract_end_date					AS 'TATTOAN_NGAYTATTOAN'
 		from		credit_contract a 
 		where		YEAR(crcontract_end_date) = '2023'
 	) W ON ISNULL(X.DAUKY_KHOANNO,'') +  ISNULL(X.PS_KHOANNO,'') = W.TATTOAN_KHOANNO
@@ -92,20 +92,21 @@ FROM SOLIEU
 --- 1. SỐ HỢP ĐỒNG TÍN DỤNG---
 
 -- ĐẦU KỲ VÀ CUỐI KỲ
-SELECT		COUNT(DAUKY_KHOANNO)	'Số khoản nợ đầu kỳ',
-			COUNT(CUOIKY_KHOANNO)	'số cuối kỳ'
-FROM		SOLIEU_FIANL
+SELECT
+	COUNT(DAUKY_KHOANNO)	'Số khoản nợ đầu kỳ',
+	COUNT(CUOIKY_KHOANNO)	'số cuối kỳ'
+FROM	SOLIEU_FIANL
 
 -- PHÁT SINH TĂNG 6T 
 -- ĐẦU NĂM
 SELECT		
-			COUNT(PS_KHOANNO)	AS [PHÁT SINH TĂNG 6T ĐẦU NĂM]
-FROM		SOLIEU_FIANL
+	COUNT(PS_KHOANNO)	AS [PHÁT SINH TĂNG 6T ĐẦU NĂM]
+FROM	SOLIEU_FIANL
 WHERE PS_NGAYBATDAU BETWEEN '2023-01-01' AND '2023-06-30'
 --CUỐI NĂM
 SELECT		
-			COUNT(PS_KHOANNO)	AS [PHÁT SINH TĂNG 6T CUỐI NĂM]
-FROM		SOLIEU_FIANL
+	COUNT(PS_KHOANNO)	AS [PHÁT SINH TĂNG 6T CUỐI NĂM]
+FROM	SOLIEU_FIANL
 WHERE PS_NGAYBATDAU BETWEEN '2023-07-01' AND '2023-12-31'
 
 -- PHÁT SINH GIẢM 6T 
@@ -113,52 +114,52 @@ WHERE PS_NGAYBATDAU BETWEEN '2023-07-01' AND '2023-12-31'
 -- ĐẦU NĂM
 
 SELECT		
-			COUNT(TATTOAN_KHOANNO)	AS [PHÁT SINH GIẢM 6T ĐẦU NĂM]
-FROM		SOLIEU_FIANL
+	COUNT(TATTOAN_KHOANNO)	AS [PHÁT SINH GIẢM 6T ĐẦU NĂM]
+FROM	SOLIEU_FIANL
 WHERE TATTOAN_NGAYTATTOAN BETWEEN '2023-01-01' AND '2023-06-30'
 
 --CUỐI NĂM
 
 SELECT		
-			COUNT(TATTOAN_KHOANNO)	AS [PHÁT SINH GIẢM 6T CUỐI NĂM]
-FROM		SOLIEU_FIANL
+	COUNT(TATTOAN_KHOANNO)	AS [PHÁT SINH GIẢM 6T CUỐI NĂM]
+FROM	SOLIEU_FIANL
 WHERE TATTOAN_NGAYTATTOAN BETWEEN '2023-07-01' AND '2023-12-31'
-
 
 --- 2.DƯ NỢ TÍN DỤNG ---
 
-
 -- ĐẦU KỲ VÀ CUỐI KỲ
-SELECT		sum(DAUKY_SODU)		'dư nợ gốc đầu kỳ',
-			sum(CUOIKY_SODU)	'số cuối kỳ'
-FROM		SOLIEU_FIANL ;
+SELECT
+	sum(DAUKY_SODU)		'dư nợ gốc đầu kỳ',
+	sum(CUOIKY_SODU)	'số cuối kỳ'
+FROM	SOLIEU_FIANL ;
 
--- PHÁT SINH TĂNG 6T 
--- ĐẦU NĂM
+-- PHAT SINH TANG 6T 
+-- DK
 
-SELECT SUM(PS_SOTIEN)	AS [PHÁT SINH TĂNG 6T ĐẦU NĂM]
+SELECT
+	SUM(PS_SOTIEN)	AS [PHÁT SINH TĂNG 6T ĐẦU NĂM]
 FROM SOLIEU_FIANL
 WHERE PS_NGAYBATDAU BETWEEN '2023-01-01' AND '2023-06-30'
 
--- CUỐI NĂM
+-- CK
 
-SELECT SUM(PS_SOTIEN)	AS [PHÁT SINH TĂNG 6T CUỐI NĂM]
+SELECT
+	SUM(PS_SOTIEN)	AS [PHÁT SINH TĂNG 6T CUỐI NĂM]
 FROM SOLIEU_FIANL
 WHERE PS_NGAYBATDAU BETWEEN '2023-07-01' AND '2023-12-31'
 
--- PHÁT SINH GIẢM 6T 
--- ĐẦU NĂM
+-- PHAT SINH GIAM 6T 
+-- DK
 
 SELECT
-SUM(THUHOI_TONGTHU)		AS [PHÁT SINH GIẢM 6T ĐẦU NĂM]
+S	UM(THUHOI_TONGTHU)		AS [PHÁT SINH GIẢM 6T ĐẦU NĂM]
 FROM 
 (
-				SELECT		DISTINCT
+	SELECT	DISTINCT
 		THUHOI_KHOANNO
 		,RANK () OVER (PARTITION BY THUHOI_KHOANNO ORDER BY ngaycuoiky desc) AS [RANK]
 		,ngaycuoiky
 		, THUHOI_TONGTHU
-				--	sum(A.THUHOI_TONGTHU)		'Số phát sinh giảm'
 		FROM		SOLIEU_FIANL A
 		LEFT JOIN CREDIT_PLAN B
 		ON A.THUHOI_KHOANNO = B.debid
@@ -166,7 +167,7 @@ FROM
 WHERE ngaycuoiky BETWEEN '2023-01-01' AND '2023-06-30'
 AND RANK = 1
 
--- CUỐI NĂM
+-- CK
 
 SELECT
 	SUM(THUHOI_TONGTHU) AS [PHÁT SINH GIẢM 6T CUỐI NĂM]
@@ -185,30 +186,27 @@ FROM
 WHERE ngaycuoiky BETWEEN '2023-07-01' AND '2023-12-31'
 AND RANK = 1
 
-
-
--- 3. SỐ LƯỢNG KHÁCH HÀNG
-
+-- 3. NUMBER OF CUSTOMERS
 
 WITH SOLIEUKHACHHANG AS 
 (
 	SELECT *
 	FROM
 	(
-	SELECT		DAUKY.custid		AS 'DAUKY_KH',
-			DAUKY.tongtien		AS 'DAUKY_ST',
-			DAUKY.ngaybatdau	AS 'DAUKY_NGAYBATDAU',
-			DAUKY.ngaytattoan	AS 'DAUKY_NGAYTATTOAN',
-			PHATSINH.custid		AS 'PHATSINH_KH',
-			PHATSINH.tongtien	AS 'PHATSINH_ST',
-			PHATSINH.ngaybatdau	AS 'PHATSINH_NGAYBATDAU',
-			PHATSINH.ngaytattoan	AS 'PHATSINH_NGAYTATTOAN'
+	SELECT		DAUKY.custid			AS 'DAUKY_KH',
+			DAUKY.tongtien			AS 'DAUKY_ST',
+			DAUKY.ngaybatdau		AS 'DAUKY_NGAYBATDAU',
+			DAUKY.ngaytattoan		AS 'DAUKY_NGAYTATTOAN',
+			PHATSINH.custid			AS 'PHATSINH_KH',
+			PHATSINH.tongtien		AS 'PHATSINH_ST',
+			PHATSINH.ngaybatdau		AS 'PHATSINH_NGAYBATDAU',
+			PHATSINH.ngaytattoan		AS 'PHATSINH_NGAYTATTOAN'
 	FROM 
 		(
 			select	A.custid, 
-				SUM(B.crlimit) as 'tongtien',
-				B.crcontract_date as 'ngaybatdau',
-				B.crcontract_end_date 'ngaytattoan'
+				SUM(B.crlimit) 		AS 'tongtien',
+				B.crcontract_date 	AS 'ngaybatdau',
+				B.crcontract_end_date 	AS 'ngaytattoan'
 			from	CUSTOMER  a 
 					inner join credit_contract  b on a.custid  = b.custid  
 			where	b.crcontract_end_date > '2022-12-31'
@@ -218,9 +216,9 @@ WITH SOLIEUKHACHHANG AS
 		FULL OUTER JOIN
 		(
 			select	A.custid, 
-				SUM(B.crlimit) as 'tongtien',
-				B.crcontract_date as 'ngaybatdau',
-				B.crcontract_end_date AS 'ngaytattoan'
+				SUM(B.crlimit) 		AS 'tongtien',
+				B.crcontract_date 	AS 'ngaybatdau',
+				B.crcontract_end_date 	AS 'ngaytattoan'
 			from	CUSTOMER  a 
 					inner join credit_contract  b on a.custid  = b.custid  
 			where	year(crcontract_date) = 2023
@@ -241,7 +239,7 @@ WITH SOLIEUKHACHHANG AS
 	LEFT JOIN
 	(
 			select	A.custid		AS 'CUOIKY_KH', 
-				SUM(B.crlimit)	AS 'CUOIKY_ST',
+				SUM(B.crlimit)		AS 'CUOIKY_ST',
 				B.crcontract_date 	AS 'CUOIKY_NGAYBATDAU',
 				B.crcontract_end_date 	AS 'CUOIKY_NGAYTATTOAN'
 			from	CUSTOMER  a 
@@ -258,16 +256,18 @@ FROM SOLIEUKHACHHANG
 --- KHÁCH HÀNG---
 SELECT * FROM SOLIEUKHACHHANG_FINAL
 
--- ĐẦU KỲ:
+-- DK
 
-SELECT		COUNT(DISTINCT(DAUKY_KH))	 AS [DK_SOLUONGKH]
-FROM		SOLIEUKHACHHANG_FINAL
+SELECT
+	COUNT(DISTINCT(DAUKY_KH))	 AS [DK_SOLUONGKH]
+FROM	SOLIEUKHACHHANG_FINAL
 
--- PHÁT SINH MỚI:
+-- PHAT SINH MOI:
 
--- 6 THÁNG ĐẦU NĂM
+-- 6 THANG DK
 
-SELECT COUNT(DISTINCT(PHATSINH_KH))  AS [PSM6TDN_SOLUONGKH]
+SELECT
+	COUNT(DISTINCT(PHATSINH_KH))  	AS [PSM6TDN_SOLUONGKH]
 FROM
 	(SELECT	
 		PHATSINH_KH
@@ -279,7 +279,7 @@ FROM
 	ON PS_6TDN.PHATSINH_KH = DK.DAUKY_KH
 WHERE DK.DAUKY_KH IS NULL
 
--- 6 THÁNG CUỐI NĂM
+-- 6 THANG CK
 
 SELECT COUNT(DISTINCT(PS_6TCN.PHATSINH_KH))  AS [PSM6TCN_SOLUONGKH]
 FROM
@@ -301,10 +301,9 @@ FROM
 WHERE DK.DAUKY_KH IS NULL
 AND PS_6TDN.PHATSINH_KH IS NULL
 
+--- TAT TOAN
 
---- TẤT TOÁN
-
--- 6 THÁNG ĐẦU NĂM
+-- 6 THANG DK
 
 SELECT COUNT(DISTINCT(TATTOAN_KH))  AS [PSG6TDN_SOLUONGKH]
 FROM
@@ -319,7 +318,7 @@ FROM
 	ON TT_6TDN.TATTOAN_KH = CK.CUOIKY_KH
 WHERE CK.CUOIKY_KH IS NULL
 
--- 6 THÁNG CUỐI NĂM
+-- 6 THANG CK
 
 SELECT COUNT(DISTINCT(TT_6TCN.TATTOAN_KH))  AS [PSG6TCN_SOLUONGKH]
 FROM
@@ -341,15 +340,15 @@ FROM
 WHERE CK.CUOIKY_KH IS NULL
 AND TT_6TDN.TATTOAN_KH IS NULL
 
--- CUỐI KỲ:
+-- CK:
 
-SELECT COUNT(DISTINCT(CUOIKY_KH))	AS [CK_SOLUONGKH]
+SELECT
+	COUNT(DISTINCT(CUOIKY_KH))	AS [CK_SOLUONGKH]
 FROM SOLIEUKHACHHANG_FINAL
 
+--- 4. DISBURSEMENT AMOUNT
 
---- 4. SỐ TIỀN GIẢI NGÂN 
-
--- ĐẦU KỲ
+-- DK
 
 SELECT 
 	SUM(DAUKY_ST)	AS [DK_DUNO]
@@ -363,9 +362,9 @@ FROM
 	FROM		SOLIEUKHACHHANG_FINAL
 	) X
 
--- PHÁT SINH MỚI:
+-- PHAT SINH MOI:
 
--- 6 THÁNG ĐẦU NĂM
+-- 6 THANG DK
 SELECT
 	SUM(PHATSINH_ST)	AS [PS6TDN_DUNO]
 FROM(
@@ -378,7 +377,7 @@ FROM(
 WHERE PHATSINH_NGAYBATDAU BETWEEN '2023-01-01' AND '2023-06-30') PS_6TDN
 
 
--- 6 THÁNG CUỐI NĂM
+-- 6 THANG CK
 
 SELECT
 	SUM(PHATSINH_ST)	AS [PS6TCN_DUNO]
@@ -391,10 +390,9 @@ FROM(
 	FROM SOLIEUKHACHHANG_FINAL
 WHERE PHATSINH_NGAYBATDAU BETWEEN '2023-07-01' AND '2023-12-31') PS_6TCN
 
+--- TAT TOAN
 
---- TẤT TOÁN
-
--- 6 THÁNG ĐẦU NĂM
+-- 6 THANG DK
 
 SELECT 
 	SUM(TATTOAN_ST)			AS [TT6TDN_DUNO]
@@ -408,7 +406,7 @@ FROM(
 WHERE TATTOAN_NGAYTATTOAN BETWEEN '2023-01-01' AND '2023-06-30') TT_6TDN
 
 
--- 6 THÁNG CUỐI NĂM
+-- 6 THANG CK
 SELECT 
 	SUM(TATTOAN_ST)		 AS [TT6TCN_DUNO]
 FROM(
@@ -420,7 +418,7 @@ FROM(
 	FROM SOLIEUKHACHHANG_FINAL
 WHERE TATTOAN_NGAYTATTOAN BETWEEN '2023-07-01' AND '2023-12-31') TT_6TCN
 
--- CUỐI KỲ:
+-- CK:
 SELECT 
 	SUM(CUOIKY_ST)  AS [CK_DUNO]
 FROM
@@ -547,7 +545,7 @@ INNER JOIN  TSBD B
 		OR A.CK_HDTC = B.HDTC_ID
 		OR A.TT_HDTC = B.HDTC_ID)
 
--- JOIN với bảng Collateral để lấy thông tin về mã TSBĐ
+-- JOIN with Collateral table to get information about TSBĐ code
 
 --drop table QUYMO_TSBĐ
 SELECT A.*, B.col_ID, B.latest_Value 
@@ -563,9 +561,9 @@ ORDER BY A.DK_KHOANNO
 
 SELECT * FROM QUYMO_TSBĐ
 
--- SỐ LƯỢNG TSBĐ VÀ TỔNG GIÁ TRỊ TSBĐ
+-- QUANTITY OF SECURITIES AND TOTAL VALUE OF SECURITIES
 
--- ĐẦU KỲ
+-- DK
 SELECT COUNT(*)							AS [DAUKY_SO_LUONG_TSBĐ]
 	,SUM(latest_Value)					AS [DAUKY_GIA_TRI_TSBĐ]
 FROM(
@@ -575,9 +573,9 @@ FROM(
 	FROM QUYMO_TSBĐ
 	WHERE DK_KHOANNO IS NOT NULL) DAU_KY
 
--- PHÁT SINH MỚI
+-- PHAT SINH MOI
 
--- 6 THÁNG ĐẦU NĂM
+-- 6 THANG DK
 
 SELECT 
 	COUNT(PHAT_SINH.col_ID)				AS [PST6TDN_SO_LUONG_TSBĐ]
@@ -598,7 +596,7 @@ SELECT
 	ON PHAT_SINH.col_ID = DAU_KY.col_ID
 	WHERE DAU_KY.col_ID IS NULL
 
--- 6 THÁNG CUỐI NĂM
+-- 6 THANG CK
 
 SELECT 
 	COUNT(PHAT_SINH_6TCN.col_ID)			AS [PST6TCN_SO_LUONG_TSBĐ]
@@ -628,10 +626,9 @@ SELECT
 	WHERE DAU_KY.col_ID IS NULL
 	    AND PHAT_SINH_6TDN.col_ID IS NULL	
 
+-- PHAT SINH GIAM
 
--- PHÁT SINH GIẢM
-
--- 6 THÁNG ĐẦU NĂM
+-- 6 THANG DK
 
 SELECT 
 	COUNT(*)							AS [PSG6TDN_SO_LUONG_TSBĐ]
@@ -652,7 +649,7 @@ LEFT JOIN
 ON TAT_TOAN.col_ID = CUOI_KY.col_ID
 WHERE CUOI_KY.col_ID IS NULL
 
--- 6 THÁNG CUỐI NĂM
+-- 6 THANG CK
 
 SELECT 
 	COUNT(*)									AS [PSG6TCN_SO_LUONG_TSBĐ]
@@ -682,7 +679,7 @@ ON TAT_TOAN_6TCN.col_ID = TAT_TOAN_6TDN.col_ID
 WHERE CUOI_KY.col_ID IS NULL
 AND TAT_TOAN_6TDN.col_ID IS NULL
 
--- CUỐI KỲ
+-- CK
 SELECT 
 	COUNT(*)							AS [CK_SO_LUONG_TSBĐ]
 	,SUM(latest_Value)					AS [CK_GIA_TRI_TSBĐ]
@@ -732,10 +729,10 @@ Query 3:
 sql
 
 ----------------------------
--- III. TĂNG TRƯỞNG QUA CÁC NĂM 
+-- III. GROWTH OVER THE YEARS
 -----------------------------
 
---1. Tính tổng latest_Value cho từng năm
+--1. Calculate the sum of latest_Value for each year
 
 WITH GIATRIHDTD_CTT AS (
     SELECT 
@@ -791,7 +788,7 @@ WITH GIATRIHDTD_CTT AS (
     ) AS X
 )
 
--- Tính tỷ lệ tăng trưởng so với năm gốc 2021
+-- Calculate growth rate compared to base year 2021
 
 SELECT
     Nam,
@@ -803,7 +800,7 @@ SELECT
     END AS TyLe_TangTruong
 FROM GIATRIHDTD_CTT
 
---2. Tính tổng dư nợ tín dụng cho từng năm
+--2. Calculate total credit balance for each year
 
 WITH GTTSBD_CTT AS (
     SELECT 
@@ -818,7 +815,7 @@ WITH GTTSBD_CTT AS (
     GROUP BY YEAR(ngaydauky)
 )
 
--- Tính tỷ lệ tăng trưởng so với năm gốc 2021
+-- Calculate growth rate compared to base year 2021
 
 SELECT
     Nam,
