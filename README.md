@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/d3792f5a-e576-42eb-8c79-070e21b53add)# SQL_Banking_Credit_Segment_Exploration
+SQL_Banking_Credit_Segment_Exploration
 SQL_Banking_Credit_Segment_Exploration
 
 ## **1. INTRODUCTION**
